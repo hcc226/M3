@@ -2,9 +2,11 @@ var webpack = require('webpack');
 var commonsPlugin = new webpack.optimize.CommonsChunkPlugin('common.js');
 var path = require('path');
 var publicPath = 'http://localhost:3000/dist/';
+//var publicPath = 'http://192.168.1.42:3009/dist/';
 var hotMiddlewareScript = 'webpack-hot-middleware/client?reload=true';
+
 module.exports = {
-    //插件项
+    //插件�?
     plugins: [
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.HotModuleReplacementPlugin(),
@@ -17,11 +19,12 @@ module.exports = {
     //入口文件输出配置
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'dist'),
+       // path: path.resolve(__dirname, 'dist'),
+        path: path.resolve('./dist/'),
         publicPath: publicPath
     },
     module: {
-        //加载器配置
+        //加载器配�?
         loaders: [
             {  test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,

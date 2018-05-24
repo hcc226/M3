@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="c370858c-3c22-44b0-8f9c-bbce09ebe03f" name="42" url="http://192.168.1.42">
+        <fileTransfer host="192.168.1.42" port="22" rootFolder="/home/huangcc/dynamicCity" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
