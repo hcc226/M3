@@ -233,6 +233,10 @@ block content
 
           div(class = 'com-slider')
               Slider(:max="item.maxComEdgefilter"  v-model = "item.comEdgefilter" style = "width:215px;margin-top:17px" @on-change='changeFilter(index,item.comEdgefilter)')
+      div(class='test')
+        i-button(type='primary' @click = 'changeToOD' )
+        i-button(type='primary' @click = 'changeToDotsCluster' )
+        i-button(type='primary' @click = 'changeToFamousEnterprise' )
 
 //div(class = "tooltip" style="opacity:0")
           //Slider(v-model = "item.visualRadius" style = "width:80px;margin-top:20px" @on-change='changeFilter(index,item.visualRadius)' disabled=true)

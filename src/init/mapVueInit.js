@@ -297,7 +297,8 @@ var maps = {
     'mapType':"none",
     'base':0,
     'animateAm':"pause",
-    'aniCurDay':-1
+    'aniCurDay':-1,
+    'port':4000
 }
 
 export {maps}

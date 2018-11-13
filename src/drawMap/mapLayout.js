@@ -24,6 +24,9 @@ import{maps} from "../init/mapVueInit"
 import{getAngle} from "../directionCluster/directionFunction"
 import {getGridID,parseFormatGID} from "./process"
 import HeatmapOverlay from "heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js"
+import {getODTripFlow} from "../services/ODMap"
+import {getDotsCluster} from "../services/dotsCluster"
+import {getFamousEnterprise} from "../services/famousEnterprise"
 class mapview{
     constructor(id,svg) {
         let self = this;
@@ -2822,25 +2825,25 @@ console.log(nodeG)
             }
         }
         allNum.sort(comp);
-        console.log(allNum)
+        //console.log(allNum)
         var seg  = getSeg(allNum);
         this.seg = seg;
-        console.log(seg)
+        //console.log(seg)
         this.gridSpeed = gridSpeed;
         this.allParticles = [].concat(allParticles);
-        console.log(gridSpeed)
-        console.log(bounds)
-        console.log(allLatLngNodes);
-        console.log(allParticles);
+        // console.log(gridSpeed)
+        // console.log(bounds)
+        // console.log(allLatLngNodes);
+        // console.log(allParticles);
         d3.select(self.map.getPanes().overlayPane).select("canvas").remove();
         L.canvas({clickable:true}).addTo(self.map);
         let canvas = d3.select(self.map.getPanes().overlayPane).select("canvas").attr("id","canvas")
         this.canvas= canvas;
-        console.log(canvas)
+       // console.log(canvas)
         var ctx = canvas.node().getContext("2d");
         this.ctx = ctx;
         var cvs = document.getElementById("canvas")
-        console.log(cvs)
+        //console.log(cvs)
         cvs.addEventListener("mouseip",detect);
         var zoomflag = false;
         function detect(event) {
@@ -5259,6 +5262,71 @@ console.log(bounds)
         this.bounds._southWest.lat = 36;
         this.bounds._southWest.lng = 115;*/
         this.drawLoopTree(this.optionData)
+    }
+    drawODMap(){
+        let self = this
+        let canvas = d3.select(self.map.getPanes().overlayPane).select("canvas").attr("id","canvas")
+        this.canvas= canvas;
+        var ctx = canvas.node().getContext("2d");
+        this.ctx = ctx;
+        ctx.clearRect(0,0,canvas.attr("width"),canvas.attr("height"))
+        ctx.strokeStyle= 'rgba(0,25,46,0.04)'
+        ctx.lineWidth = 0.01;
+        getODTripFlow(9).then(function (data) {
+            data.forEach(function (t,i) {
+                if(i%10===0){
+                    ctx.beginPath()
+                    let fromPoint = self.map.latLngToLayerPoint(new L.LatLng(t.from.lat,t.from.lng))
+                    let toPoint = self.map.latLngToLayerPoint(new L.LatLng(t.to.lat,t.to.lng))
+                    ctx.moveTo(fromPoint.x, fromPoint.y);
+                    ctx.lineTo(toPoint.x, toPoint.y);
+                    ctx.stroke()
+                }
+            })
+        })
+    }
+    drawDotsCluster(){
+        let self = this
+        let canvas = d3.select(self.map.getPanes().overlayPane).select("canvas").attr("id","canvas")
+        this.canvas= canvas;
+        var ctx = canvas.node().getContext("2d");
+        this.ctx = ctx;
+        ctx.clearRect(0,0,canvas.attr("width"),canvas.attr("height"))
+
+        //ctx.lineWidth = 0.01;
+        getDotsCluster(0,'v1',1).then(function (data) {
+           data.nodes.forEach(function (t) {
+               //console.log(t)
+               ctx.beginPath();
+               let center = self.map.latLngToLayerPoint(new L.LatLng(t.y,t.x))
+               //console.log(center)
+               ctx.arc(center.x, center.y, 0.2*self.map.getZoom(), 0, 2*Math.PI)
+               ctx.fillStyle= 'rgba(255,0,0,0.4)'
+               ctx.fill()
+           })
+        })
+    }
+    drawFamousEnterprise(){
+        //todo
+        let self = this
+        let canvas = d3.select(self.map.getPanes().overlayPane).select("canvas").attr("id","canvas")
+        this.canvas= canvas;
+        var ctx = canvas.node().getContext("2d");
+        this.ctx = ctx;
+        ctx.clearRect(0,0,canvas.attr("width"),canvas.attr("height"))
+
+        getFamousEnterprise().then(function (data) {
+            //console.log()
+            JSON.parse(data).poi.forEach(function (t) {
+                //console.log(t)
+                ctx.beginPath();
+                let center = self.map.latLngToLayerPoint(new L.LatLng(t.cp[1],t.cp[0]))
+                //console.log(center)
+                ctx.arc(center.x, center.y, 0.2*self.map.getZoom(), 0, 2*Math.PI)
+                ctx.fillStyle= 'rgba(255,0,0,0.4)'
+                ctx.fill()
+            })
+        })
     }
     }
     //testout

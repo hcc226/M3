@@ -26,7 +26,7 @@ function getData(curHourId) {
     else {
         seedUnit ="grid"
     }
-    var url ="http://192.168.1.42:3000/api/treeMap?treeNumRate="+seedNum+"&searchAngle="+angle+"&seedStrength="+seedStrength+"&treeWidth="+treeWidth+"&spaceInterval="+spaceInterval+"&seedUnit="+seedUnit+"&jumpLen="+jumpLen+"&gridDirNum="+gridDirNum+"&timeSegID="+timeSegId;
+    var url ="http://192.168.1.42:3033/api/treeMap?treeNumRate="+seedNum+"&searchAngle="+angle+"&seedStrength="+seedStrength+"&treeWidth="+treeWidth+"&spaceInterval="+spaceInterval+"&seedUnit="+seedUnit+"&jumpLen="+jumpLen+"&gridDirNum="+gridDirNum+"&timeSegID="+timeSegId;
     console.log(url) ;
 
     map[0].allLatLngNodes = [];
@@ -114,7 +114,7 @@ function getDataAm(aniCurDay) {
     else {
         seedUnit ="grid"
     }
-    var url ="http://192.168.1.42:3000/api/treeMap?treeNumRate="+seedNum+"&searchAngle="+angle+"&seedStrength="+seedStrength+"&treeWidth="+treeWidth+"&spaceInterval="+spaceInterval+"&seedUnit="+seedUnit+"&jumpLen="+jumpLen+"&gridDirNum="+gridDirNum+"&timeSegID="+timeSegId;
+    var url ="http://192.168.1.42:3033/api/treeMap?treeNumRate="+seedNum+"&searchAngle="+angle+"&seedStrength="+seedStrength+"&treeWidth="+treeWidth+"&spaceInterval="+spaceInterval+"&seedUnit="+seedUnit+"&jumpLen="+jumpLen+"&gridDirNum="+gridDirNum+"&timeSegID="+timeSegId;
     console.log(url) ;
 
     map[0].allLatLngNodes = [];
@@ -176,5 +176,174 @@ function showRect(aniCurDay) {
        return "grey"
    })
 }
+function getTreeMap() {
+    var seedNum = maps.seedNum/100;
+    var angle = maps.newOptionData[1].init;
+    var seedStrength = maps.newOptionData[2].init;
+    var treeWidth =1;
+    var direction = maps.fromOrTo;
+    var spaceInterval = 200;
+    var jumpLen = maps.newOptionData[0].init;
+    var gridDirNum = maps.newOptionData[7].init;
+    var timeSegId = maps.timeSegId;
+    var seedUnit = maps.seedUnit.init;
+    var delta = maps.newOptionData[8].init;
+    if(seedUnit =="Dir") {
+        seedUnit = "basic"
+    }
+    else {
+        seedUnit ="grid"
+    }
+    var url ="http://192.168.1.42:3033/api/treeMap?treeNumRate="+seedNum+"&searchAngle="+angle+"&seedStrength="+seedStrength+"&treeWidth="+treeWidth+"&spaceInterval="+spaceInterval+"&seedUnit="+seedUnit+"&jumpLen="+jumpLen+"&gridDirNum="+gridDirNum+"&timeSegID="+timeSegId+"&delta="+delta;
+    console.log(url) ;
+    return new Promise(function (resolve,reject) {
+        $.ajax({
+            url:url ,
+            type: 'GET',
+            contentType: "application/json",
+            dataType: 'jsonp',
+            async:false,
+            success: function (data) {
+                //resolve(data);
+                var res;
+                console.log(data);
+                if(direction=="from"){
+                    res = data.res.from;
+                }
+                else if(direction == "to"){
+                    res = data.res.to;
+                }
+                else if(direction == "all"){
+                    res = data.res.from;
+                    data.res.to.forEach(function (d) {
+                        res.push(d)
+                    })
+                }
+                resolve(res)
+                /*res.forEach(function (tree) {
+                    var path = [];
+                    var drawedSet = new Set()
+                    map[0].generate(tree,path,drawedSet)
+                    //mrequestap[0].drawTree(tree,path,drawedSet)
+                })
+                // map[0].drawAnimationTree();
+                if(maps.status == "play"){
+                    map[0].drawLoopTree(maps.newOptionData);
 
-export{request,requestAm}
+                }
+                else{
+                    map[0].drawStayPath(maps.newOptionData);
+
+                }*/
+                // map[0].addTestLayer();
+            }
+        })
+    })
+}
+
+function getAbnormalStatus(curtype){
+    var heatType,type;
+    if(curtype == "heatType"){
+        heatType = maps.heatType;
+        type = maps.heatType;
+        maps.anomalyType = "none"
+    }
+    else if(curtype == "anomalyType"){
+        heatType = maps.anomalyType;
+        type = maps.anomalyType;
+        maps.heatType = "none"
+    }
+
+    console.log(heatType)
+
+    var timeSegID = maps.timeSegId+maps.daySelect*24;
+    if(maps.base!=0){
+        timeSegID = maps.base+maps.daySelect*24
+    }
+    var hourID = timeSegID%24;
+
+    if(heatType=="Mov."){
+        type = "flow"
+    }
+    else if(heatType=="Pop."){
+        type = "record"
+    }
+    else if(heatType=="hourly"){
+        type = "ano1";
+    }
+    else if(heatType == "daily"){
+        type = "ano2"
+    }
+    if(heatType == "none"){
+        map[0].addHeatMap("none");
+    }
+    else if(heatType == "Speed"){
+        map[0].addHeatMap("speed")
+    }
+    else{
+        /* if(maps.base != 0 ){
+             alert("no data") ;
+             maps.heatType = "none";
+             maps.anomalyType = "none";
+             return;
+         }*/
+        //mov，density,ano1,ano2
+        var url = "http://192.168.1.42:3033/api/abnormalStats?hourID="+hourID+"&timeSegID="+timeSegID+"&type="+type;
+        console.log(url)
+
+            $.ajax({
+                url:url,
+                type: 'GET',
+                contentType: "application/json",
+                dataType: 'jsonp',
+                async:false,
+                success: function (data) {
+                    if(type == "record"){
+                        if(JSON.stringify(data) == "{}"){
+                            alert("no data") ;
+                            maps.heatType = "none";
+                            maps.anomalyType = "none";
+                            return;
+                        }
+                        else if(data.length ==0){
+                            alert("no data") ;
+                            maps.heatType = "none";
+                            maps.anomalyType = "none";
+                            return;
+                        }
+                    }
+                    else if(!data.from){
+                        alert("no data") ;
+                        maps.heatType = "none";
+                        maps.anomalyType = "none";
+                        return;
+                    }
+                    var ft = maps.fromOrTo;
+                    var res;
+                    console.log(data)
+                    //resolve(heatType,data)
+                    map[0].addHeatMap(heatType,data)
+                    /*  if(type=="record"){
+                          map[0].addHeatMap(heatType,data)
+                      }
+                      else {
+                          if(ft=="from"){
+                              res = data.from;
+                          }
+                          else if(ft =="to"){
+                              res = data.to;
+                          }
+                          map[0].addHeatMap(heatType,res)
+                      }
+    */
+
+        }
+    })
+
+    }
+
+}
+
+
+
+export{request,requestAm,getTreeMap,getAbnormalStatus}
