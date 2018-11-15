@@ -251,6 +251,17 @@ var maps = {
                 {value:1,label:1},
                 {value:2,label:2}
             ]
+        },
+        {index:10,
+            name:"MaxFlowSpeed:",
+            init:200,
+            option:[
+                {value:0,label:0},
+                {value:10,label:10},
+                {value:30,label:30},
+                {value:70,label:70},
+                {value:200,label:200}
+            ]
         }
        /* {
             index:9,

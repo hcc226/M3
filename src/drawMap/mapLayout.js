@@ -107,9 +107,9 @@ class mapview{
         let self = this;
         L.geoJSON(data,{
             style:function (feature) {
-                return {color:'grey',
+                return {color:'red',
                     weight:1,
-                    fillColor:'none'
+                    fillColor:'grey'
                 };
             }
         }).addTo(self.map);
@@ -2677,6 +2677,7 @@ console.log(nodeG)
         var minTrajLen = optiondata[4].init;
         //var minTotalFlow = optiondata[5].init;
         var minSpeed = optiondata[5].init;
+        var maxSpeed = optiondata[9].init;
         let g = d3.select(self.map.getPanes().overlayPane).select("svg").select("g")
             .style("fill", "none")
             .style("stroke", "white")
@@ -2744,7 +2745,7 @@ console.log(nodeG)
                 var averageSpeed = getInfo(d)[2]*3.6;
                 var dlen = d.length;
                // var ss = getCtrlPoint(g,d,self.map)
-                if(trajLen >= minTrajLen  && averageSpeed>= minSpeed){
+                if(trajLen >= minTrajLen  && averageSpeed>= minSpeed && averageSpeed <= maxSpeed){
                     if(bounds){
                        for(var k = 0;k<bounds.length;k++){
                            var bound = bounds[k];
@@ -3461,27 +3462,40 @@ console.log(nodeG)
             else if(ft =="to"){
                 heatdata = data.to;
             }*/
-            heatdata = data.to;
+            heatdata = data.from;
+            var maxAnomaly = 0
           heatdata.forEach(function (t) {
           if(t[3]>0){
               var point = {lat:t[2],lng:t[1],count:t[3]};
               posHeatData.push(point)
+              if(t[3]>maxAnomaly){
+                  maxAnomaly = t[3]
+              }
           }
           else if(t[3]<0){
               var point = {lat:t[2],lng:t[1],count:0-t[3]};
               negHeatData.push(point)
+              if(0-t[3]>maxAnomaly){
+                  maxAnomaly = 0-t[3]
+              }
           }
           })
-            //posHeatData.sort(comparedata)
-            negHeatData.sort(comparedata)
+            posHeatData = posHeatData.filter( t => {
+                return t.count > maxAnomaly*(1-heatpro/100)
+            })
+
+            negHeatData = negHeatData.filter( t => {
+                return t.count > maxAnomaly*(1-heatpro/100)
+            })
+            // //posHeatData.sort(comparedata)
+            // negHeatData.sort(comparedata)
             console.log("pos len is"+posHeatData.length)
             console.log("neg len is"+negHeatData.length)
-
-              var plen = parseInt((posHeatData.length+negHeatData.length)*heatpro/100/2);
-              console.log(plen)
-              posHeatData = posHeatData.slice(0,plen);
-             // var nlen = parseInt((negHeatData.length)*heatpro/100);
-              negHeatData = negHeatData.slice(0,plen)
+            //   var plen = parseInt((posHeatData.length+negHeatData.length)*heatpro/100/2);
+            //   console.log(plen)
+            //   posHeatData = posHeatData.slice(0,plen);
+            //  // var nlen = parseInt((negHeatData.length)*heatpro/100);
+            //   negHeatData = negHeatData.slice(0,plen)
 
 
         }
@@ -3577,7 +3591,7 @@ console.log(nodeG)
         this.heatmapLayer = heatmapLayer;
         if(type == "Mov." || type == "hourly" || type == "daily"){
              var negtestData = {
-          max: negMax,
+          max: maxNum,
           min:0,
           data: negHeatData
             };

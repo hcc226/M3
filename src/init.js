@@ -304,7 +304,7 @@ const userpannel = new Vue({
         'changeOption':function () {
             //d3.select(".ivu-tooltip-popper").style("top","-40px");
             console.log("changeOption")
-           /* var seedNum = maps.seedNum/100;
+            var seedNum = maps.seedNum/100;
             var angle = maps.newOptionData[1].init;
             var seedStrength = maps.newOptionData[2].init;
             var treeWidth = 1;
@@ -325,7 +325,7 @@ const userpannel = new Vue({
                 seedUnit ="grid"
             }
             var url ="http://192.168.1.42:3033/api/treeMap?treeNumRate="+seedNum+"&searchAngle="+angle+"&seedStrength="+seedStrength+"&treeWidth="+treeWidth+"&spaceInterval="+spaceInterval+"&seedUnit="+seedUnit+"&jumpLen="+jumpLen+"&gridDirNum="+gridDirNum+"&timeSegID="+timeSegId+"&delta="+delta;
-            console.log(url) ;*/
+            console.log(url) ;
             map[0].allLatLngNodes = [];
             map[0].lastLen = 0;
             maps.fade = false;
@@ -1809,6 +1809,10 @@ const userpannel = new Vue({
                 }
 
             })*/
+
+          // $.getJSON('/data/businessAreaBoundary.json', function (data) {
+          //     //map[0].drawBoundary(data)
+          // })
           getTreeMap()
               .then(function (res) {
               res.forEach(function (tree) {
@@ -1863,5 +1867,4 @@ const userpannel = new Vue({
 })
 
 export {disAxis,comAxis,request_days,map,clock,directionCluster}
-
 
