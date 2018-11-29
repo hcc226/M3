@@ -188,13 +188,14 @@ function getTreeMap() {
     var timeSegId = maps.timeSegId;
     var seedUnit = maps.seedUnit.init;
     var delta = maps.newOptionData[8].init;
+    var speedToShow = maps.speedToShow
     if(seedUnit =="Dir") {
         seedUnit = "basic"
     }
     else {
         seedUnit ="grid"
     }
-    var url ="http://192.168.1.42:3033/api/treeMap?treeNumRate="+seedNum+"&searchAngle="+angle+"&seedStrength="+seedStrength+"&treeWidth="+treeWidth+"&spaceInterval="+spaceInterval+"&seedUnit="+seedUnit+"&jumpLen="+jumpLen+"&gridDirNum="+gridDirNum+"&timeSegID="+timeSegId+"&delta="+delta;
+    var url ="http://192.168.1.42:3033/api/treeMap?treeNumRate="+seedNum+"&searchAngle="+angle+"&seedStrength="+seedStrength+"&treeWidth="+treeWidth+"&spaceInterval="+spaceInterval+"&seedUnit="+seedUnit+"&jumpLen="+jumpLen+"&gridDirNum="+gridDirNum+"&timeSegID="+timeSegId+"&delta="+delta+"&speedToShow="+speedToShow;
     console.log(url) ;
     return new Promise(function (resolve,reject) {
         $.ajax({

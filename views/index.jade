@@ -150,7 +150,9 @@ block content
           span(style="margin-left:5px") Flow Generation
           radio-group(v-model="seedUnit.init"  @on-change="changeOption" style="margin-left:10px")
             radio(label="Dir" style="color:white")
-            radio(label="Grid" style="color:white")
+            //radio(label="Grid" style="color:white")
+            radio(label="Hub" style="color:white")
+            radio(label="Channel" style="color:white")
         div(class = "seed-slider")
           span(style="margin-left:5px") Display Percentage
           //select(v-model="seedUnit.init"  @change='changeOption'  style="width:55px;margin-top:10px;margin-left:5px")
@@ -237,7 +239,15 @@ block content
         i-button(type='primary' @click = 'changeToOD' )
         i-button(type='primary' @click = 'changeToDotsCluster' )
         i-button(type='primary' @click = 'changeToFamousEnterprise' )
-
+        i-button(type='primary' @click = 'changeToHotPlaces' )
+        i-button(type='primary' @click = 'changeToHotPlaces("from")' )
+        i-button(type='primary' @click = 'changeToHotPlacesCluster' )
+        br
+        i-button(type='primary' @click = 'changeToHub' )
+        i-button(type='primary' @click = 'changeToChannel' )
+        i-button(type='primary' @click = 'changeToSpeed("low")' )
+        i-button(type='primary' @click = 'changeToSpeed("mid")' )
+        i-button(type='primary' @click = 'changeToSpeed("high")' )
 //div(class = "tooltip" style="opacity:0")
           //Slider(v-model = "item.visualRadius" style = "width:80px;margin-top:20px" @on-change='changeFilter(index,item.visualRadius)' disabled=true)
             //Slider(:max="5000"   v-model = "item.nodeStayFilter"  style = "width:80px;margin-top:17px" @on-change='changeFilter(index,item.nodeStayFilter)' disabled=true)

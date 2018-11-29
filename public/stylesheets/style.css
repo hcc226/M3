@@ -455,15 +455,14 @@ input[type="range"] {
   position: absolute!important; }
 
 .test{
+  padding: 20px;
   position: absolute;
   right: 50px;
   bottom: 30px;
   background-color: #D1D1D1;
   height: 200px;
   width: 200px;
-  border-radius: 100px;
+
   z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
 }

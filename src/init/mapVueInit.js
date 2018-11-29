@@ -262,6 +262,18 @@ var maps = {
                 {value:70,label:70},
                 {value:200,label:200}
             ]
+        },
+        {index:11,
+            name:"MaxDistance:",
+            init:2,
+            option:[
+                {value:1,label:1},
+                {value:2,label:2},
+                {value:3,label:3},
+                {value:7,label:7},
+                {value:20,label:20},
+                {value:9999,label:9999}
+            ]
         }
        /* {
             index:9,
@@ -309,7 +321,8 @@ var maps = {
     'base':0,
     'animateAm':"pause",
     'aniCurDay':-1,
-    'port':4000
+    'port':4000,
+    'speedToShow':'all'
 }
 
 export {maps}

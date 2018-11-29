@@ -238,6 +238,40 @@ const userpannel = new Vue({
         'changeToFamousEnterprise':function () {
             map[0].drawFamousEnterprise()
         },
+        'changeToHotPlaces': function (type) {
+            map[0].drawHotPlaces(type)
+        },
+        'changeToHotPlacesCluster': function () {
+           map[0].drawHotGridCluster()
+        },
+        'changeToHub':function () {
+           map[0].drawHub()
+        },
+        'changeToChannel':function () {
+
+          map[0].drawChannel()
+        },
+        'changeToSpeed':function (speed) {
+            maps.speedToShow = speed
+            map[0].allLatLngNodes = [];
+            map[0].lastLen = 0;
+            maps.fade = false;
+            getTreeMap()
+                .then(function (res) {
+                    res.forEach(function (tree) {
+                        var path = [];
+                        var drawedSet = new Set()
+                        map[0].generate(tree,path,drawedSet)
+                    })
+                    if(maps.status == "play"){
+                        map[0].drawLoopTree(maps.newOptionData);
+                        //map[0].drawODMap()
+                    }
+                    else{
+                        map[0].drawStayPath(maps.newOptionData);
+                    }
+                })
+        },
         'changeHeatOption':function (curtype) {
             getAbnormalStatus(curtype)
                /* .then(function (heatType,data) {
@@ -313,6 +347,7 @@ const userpannel = new Vue({
             var jumpLen = maps.newOptionData[0].init;
             var gridDirNum = maps.newOptionData[7].init;
             var timeSegId = maps.timeSegId+maps.daySelect*24;
+            var maxDistance = maps.newOptionData[10].init
             if(maps.base!=0){
                 timeSegId = maps.base;
             }
@@ -320,11 +355,23 @@ const userpannel = new Vue({
             var delta = maps.newOptionData[8].init;
             if(seedUnit =="Dir") {
                 seedUnit = "basic"
+                maps.newOptionData[10].init = 9999
+                maxDistance = 9999
             }
-            else {
+            else if (seedUnit == "Hub") {
+                seedUnit = "hub"
+                maps.newOptionData[10].init = 2
+                maxDistance = 2
+            }
+            else if (seedUnit == "Channel") {
+                seedUnit = "channel"
+                maps.newOptionData[10].init = 9999
+                maxDistance = 9999
+            }
+            else{
                 seedUnit ="grid"
             }
-            var url ="http://192.168.1.42:3033/api/treeMap?treeNumRate="+seedNum+"&searchAngle="+angle+"&seedStrength="+seedStrength+"&treeWidth="+treeWidth+"&spaceInterval="+spaceInterval+"&seedUnit="+seedUnit+"&jumpLen="+jumpLen+"&gridDirNum="+gridDirNum+"&timeSegID="+timeSegId+"&delta="+delta;
+            var url ="http://192.168.1.42:3033/api/treeMap?treeNumRate="+seedNum+"&searchAngle="+angle+"&seedStrength="+seedStrength+"&treeWidth="+treeWidth+"&spaceInterval="+spaceInterval+"&seedUnit="+seedUnit+"&jumpLen="+jumpLen+"&gridDirNum="+gridDirNum+"&timeSegID="+timeSegId+"&delta="+delta+"&maxDistance="+maxDistance;
             console.log(url) ;
             map[0].allLatLngNodes = [];
             map[0].lastLen = 0;
@@ -1746,73 +1793,11 @@ const userpannel = new Vue({
             var endtime = end_time.split('-')[0] + "-" + start_month + "-" + end_time.split('-')[2] + "+" + end_hour;
            var cluster;
 
-          /*  var url = "http://192.168.1.42:3033/api/tripFlow?type=record&thread=10000&time=2016-07-05%2009:00:00&order=DESC&v=v1"
-            var particleNum = maps.mapObj[0].particleNum;
-            var maxParticleLength = maps.mapObj[0].maxParticleLength;
-            var directionNum = maps.mapObj[0].directionNum;*/
-          /* var seedNum = maps.seedNum/100;
-           var angle = maps.newOptionData[1].init;
-           var seedStrength = maps.newOptionData[2].init;
-           var treeWidth =1;
-           var direction = maps.fromOrTo;
-           var spaceInterval = 200;
-            var jumpLen = maps.newOptionData[0].init;
-            var gridDirNum = maps.newOptionData[7].init;
-            var timeSegId = maps.timeSegId;
-           var seedUnit = maps.seedUnit.init;
-           var delta = maps.newOptionData[8].init;
-           if(seedUnit =="Dir") {
-               seedUnit = "basic"
-           }
-            else {
-               seedUnit ="grid"
-           }
-          var url ="http://192.168.1.42:3033/api/treeMap?treeNumRate="+seedNum+"&searchAngle="+angle+"&seedStrength="+seedStrength+"&treeWidth="+treeWidth+"&spaceInterval="+spaceInterval+"&seedUnit="+seedUnit+"&jumpLen="+jumpLen+"&gridDirNum="+gridDirNum+"&timeSegID="+timeSegId+"&delta="+delta;
-          console.log(url) ;
-          $.ajax({
-                url:url ,
-                type: 'GET',
-                contentType: "application/json",
-                dataType: 'jsonp',
-                async:true,
-                success: function (data) {
-                    var res;
-                    console.log(data);
-                    if(direction=="from"){
-                        res = data.res.from;
-                    }
-                    else if(direction == "to"){
-                        res = data.res.to;
-                    }
-                    else if(direction == "all"){
-                        res = data.res.from;
-                        data.res.to.forEach(function (d) {
-                            res.push(d)
-                        })
-                    }
-                    res.forEach(function (tree) {
-                        var path = [];
-                        var drawedSet = new Set()
-                        map[0].generate(tree,path,drawedSet)
-                        //mrequestap[0].drawTree(tree,path,drawedSet)
-                    })
-                    // map[0].drawAnimationTree();
-                    if(maps.status == "play"){
-                        map[0].drawLoopTree(maps.newOptionData);
-
-                    }
-                    else{
-                        map[0].drawStayPath(maps.newOptionData);
-
-                    }
-                   // map[0].addTestLayer();
-                }
-
-            })*/
-
           // $.getJSON('/data/businessAreaBoundary.json', function (data) {
-          //     //map[0].drawBoundary(data)
+          //     map[0].drawBoundary(data)
           // })
+
+
           getTreeMap()
               .then(function (res) {
               res.forEach(function (tree) {
